@@ -54,6 +54,11 @@ form textarea {
     margin-bottom: 10px;
 }
 
+form .error-msg {
+    color: red;
+    font-style: italic;
+}
+
 /* HOVER */
 button:hover,
 .post-decor:hover {

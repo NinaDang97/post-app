@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-import {connect} from 'react-redux';
 
 class Post extends Component {
     render(){
@@ -15,4 +14,4 @@ class Post extends Component {
     }
 }
 
-export default connect()(Post);
+export default Post;
