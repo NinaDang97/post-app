@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import * as Types from '../Actions';
 //redux-form
-import { reduxForm, Field } from 'redux-form';
+import { reduxForm, Field, getFormSyncErrors } from 'redux-form';
 import Input from './Input';
 import uniqid from 'uniqid';
 
@@ -18,7 +18,7 @@ class Form extends Component {
     }
 
     onSave = (value) => {
-        const id = uniqid();
+        const id = this.props.action === 'Edit' ? this.props.match.params.id : uniqid();
         const newPost = {...value, id}; //object
         this.props.getPostSave(newPost); //dispatch
         this.props.history.push('/');
@@ -32,7 +32,7 @@ class Form extends Component {
     
     render(){
         const {handleSubmit} = this.props;
-        console.log(this.props.initialValues);
+        console.log(this.props.syncErr);
         return (
             <form onSubmit={handleSubmit(this.onSave)}>
                 <div className='title'>
@@ -47,16 +47,21 @@ class Form extends Component {
                 {/* type submit is default */}
                 <button type='submit'>Save</button> 
                 <button type='button' onClick={this.onCancel}>Cancel</button>
+                
             </form>
+            
         )
     }
 }
 
 const mapStateToProps = (state, props) => {
     const posts = Object.values(state.posts)
-    const id = props.match.params.id;
-    const foundPost = posts.find(val => val.id === id);
+    const id = props.action === 'Edit' ? props.match.params.id : null;
+    const foundPost = id 
+    ? posts.find(val => val.id === id) 
+    : {title: '', category: '', content: ''};
     return {
+        syncErr: getFormSyncErrors('postForm')(state),
         initialValues: {
             title: foundPost.title,
             category: foundPost.category,
@@ -71,5 +76,6 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
+Form = reduxForm({form: 'postForm'})(Form);
 Form = connect(mapStateToProps, mapDispatchToProps)(Form);
-export default reduxForm({form: 'postForm'})(Form);
+export default Form;
